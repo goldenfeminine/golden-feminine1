@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deviens ELLE — Golden Feminine</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;}
+body{
+  background:#050505;
+  font-family:'Cormorant Garamond',serif;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* GRAIN */
+body::after{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity:0.028;pointer-events:none;z-index:9999;
+}
+
+/* CANVAS */
+.canvas{
+  width:900px;height:506px;
+  position:relative;
+  overflow:hidden;
+  background:#050505;
+}
+
+/* GLOW */
+.glow{
+  position:absolute;
+  width:600px;height:600px;
+  background:radial-gradient(ellipse,rgba(201,168,76,0.07) 0%,transparent 65%);
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  transition:opacity 1s ease;
+}
+
+/* PROGRESS BAR */
+.progress{
+  position:absolute;bottom:0;left:0;
+  height:2px;background:rgba(201,168,76,0.15);
+  width:100%;z-index:50;
+}
+.progress-fill{
+  height:100%;background:linear-gradient(90deg,#C9A84C,#E8C97A);
+  width:0%;transition:width 0.1s linear;
+}
+
+/* CONTROLS */
+.controls{
+  position:absolute;bottom:16px;right:20px;
+  display:flex;gap:10px;z-index:100;
+}
+.ctrl-btn{
+  background:rgba(201,168,76,0.1);
+  border:1px solid rgba(201,168,76,0.25);
+  color:#C9A84C;font-size:11px;
+  padding:6px 14px;cursor:pointer;
+  font-family:'Cinzel',serif;letter-spacing:2px;
+  transition:all 0.3s;
+}
+.ctrl-btn:hover{background:rgba(201,168,76,0.2);}
+
+/* SLIDE counter */
+.slide-counter{
+  position:absolute;bottom:18px;left:20px;
+  font-family:'Cinzel',serif;font-size:8px;
+  letter-spacing:3px;color:#C9A84C;opacity:0.35;
+  z-index:100;
+}
+
+/* GOLD LINES DECO */
+.deco-top{
+  position:absolute;top:0;left:0;right:0;
+  height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.4),transparent);
+}
+.deco-bot{
+  position:absolute;bottom:2px;left:0;right:0;
+  height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.2),transparent);
+}
+
+/* ══════════════════════
+   SLIDES
+══════════════════════ */
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.8s ease;
+  padding:48px;
+}
+.slide.active{opacity:1;pointer-events:all;}
+
+/* SLIDE 1 — Titre */
+.s1-brand{
+  font-family:'Cinzel',serif;font-size:9px;
+  letter-spacing:6px;color:#C9A84C;opacity:0;
+  margin-bottom:32px;
+  animation:none;
+}
+.s1-title{
+  font-size:clamp(36px,7vw,68px);
+  font-weight:300;line-height:0.9;
+  text-align:center;color:#f0f0f0;
+  opacity:0;
+}
+.s1-title em{
+  display:block;font-style:italic;
+  color:#E8C97A;font-size:1.15em;
+}
+.s1-line{
+  width:0px;height:1px;
+  background:linear-gradient(90deg,transparent,#C9A84C,transparent);
+  margin:28px auto;
+  transition:width 0.8s ease;
+}
+.s1-sub{
+  font-size:16px;font-style:italic;
+  color:#aaa;text-align:center;
+  opacity:0;max-width:500px;
+  line-height:1.7;
+}
+.s1-crown{
+  font-size:32px;color:#C9A84C;
+  opacity:0;margin-bottom:24px;
+}
+
+/* SLIDE 2 — Histoire */
+.s2-label{
+  font-family:'Cinzel',serif;font-size:8px;
+  letter-spacing:5px;color:#C9A84C;opacity:0;
+  margin-bottom:24px;
+}
+.s2-text{
+  font-size:22px;font-weight:300;
+  line-height:1.7;text-align:center;
+  color:#d0d0d0;max-width:680px;
+  opacity:0;
+}
+.s2-text strong{color:#fff;font-weight:400;}
+.s2-text em{color:#E8C97A;font-style:italic;}
+
+/* SLIDE 3 — Le problème */
+.s3-wrap{
+  display:flex;flex-direction:column;
+  align-items:center;gap:16px;
+  width:100%;max-width:700px;
+}
+.s3-big{
+  font-size:clamp(28px,5vw,52px);
+  font-weight:300;text-align:center;
+  color:#f0f0f0;line-height:1.1;
+  opacity:0;
+}
+.s3-big em{font-style:italic;color:#E8C97A;}
+.s3-quote{
+  border-left:2px solid #C9A84C;
+  padding:16px 24px;
+  background:rgba(201,168,76,0.04);
+  max-width:600px;width:100%;
+  opacity:0;
+}
+.s3-quote p{
+  font-size:16px;font-style:italic;
+  color:#C9A84C;line-height:1.6;
+}
+
+/* SLIDE 4 — Les 5 parties */
+.s4-title{
+  font-size:clamp(18px,3vw,28px);
+  font-weight:300;color:#f0f0f0;
+  text-align:center;margin-bottom:32px;
+  opacity:0;
+}
+.s4-title em{font-style:italic;color:#E8C97A;}
+.s4-grid{
+  display:grid;grid-template-columns:repeat(5,1fr);
+  gap:8px;width:100%;
+}
+.s4-item{
+  background:rgba(201,168,76,0.04);
+  border:1px solid rgba(201,168,76,0.1);
+  padding:16px 12px;text-align:center;
+  opacity:0;transform:translateY(16px);
+  transition:all 0.5s ease;
+}
+.s4-num{
+  font-family:'Cinzel',serif;font-size:8px;
+  letter-spacing:2px;color:#C9A84C;
+  opacity:0.5;margin-bottom:8px;
+}
+.s4-name{
+  font-size:13px;font-style:italic;
+  color:#E8C97A;line-height:1.3;
+}
+
+/* SLIDE 5 — La question */
+.s5-wrap{text-align:center;}
+.s5-small{
+  font-family:'Cinzel',serif;font-size:9px;
+  letter-spacing:5px;color:#C9A84C;opacity:0;
+  margin-bottom:28px;
+}
+.s5-big{
+  font-size:clamp(32px,6vw,64px);
+  font-style:italic;font-weight:300;
+  color:#E8C97A;line-height:1.2;
+  opacity:0;
+}
+.s5-sub{
+  font-size:16px;color:#888;
+  margin-top:24px;opacity:0;
+  line-height:1.8;max-width:560px;
+}
+
+/* SLIDE 6 — Transformation */
+.s6-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:2px;width:100%;max-width:720px;
+}
+.s6-col{padding:28px 24px;opacity:0;}
+.s6-col.avant{
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.05);
+}
+.s6-col.apres{
+  background:rgba(201,168,76,0.05);
+  border:1px solid rgba(201,168,76,0.15);
+}
+.s6-head{
+  font-size:22px;font-weight:300;
+  margin-bottom:4px;color:#f0f0f0;
+}
+.s6-head.gold{color:#E8C97A;}
+.s6-sub{
+  font-family:'Cinzel',serif;font-size:7px;
+  letter-spacing:3px;color:#888;margin-bottom:20px;
+}
+.s6-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.s6-list li{font-size:13px;color:#aaa;display:flex;gap:8px;}
+.s6-list li::before{content:'—';color:#555;flex-shrink:0;}
+.s6-list.gold-list li{color:#d0d0d0;}
+.s6-list.gold-list li::before{content:'♛';color:#C9A84C;font-size:8px;margin-top:2px;}
+
+/* SLIDE 7 — CTA finale */
+.s7-wrap{text-align:center;}
+.s7-crown{font-size:36px;color:#C9A84C;opacity:0;margin-bottom:20px;}
+.s7-title{
+  font-size:clamp(28px,5vw,52px);
+  font-weight:300;color:#f0f0f0;
+  line-height:1;opacity:0;margin-bottom:8px;
+}
+.s7-title em{font-style:italic;color:#E8C97A;}
+.s7-quote{
+  font-size:18px;font-style:italic;
+  color:#C9A84C;opacity:0;
+  margin:24px 0;line-height:1.6;
+  max-width:560px;
+}
+.s7-price{
+  font-size:56px;font-weight:300;
+  color:#E8C97A;opacity:0;line-height:1;
+  margin-bottom:4px;
+}
+.s7-info{
+  font-family:'Cinzel',serif;font-size:8px;
+  letter-spacing:3px;color:#888;opacity:0;
+  margin-bottom:24px;
+}
+.s7-btn{
+  display:inline-block;
+  background:linear-gradient(135deg,#C9A84C,#E8C97A);
+  color:#050505;
+  font-family:'Cinzel',serif;font-size:10px;
+  letter-spacing:4px;padding:18px 40px;
+  opacity:0;cursor:pointer;border:none;
+}
+.s7-brand{
+  font-family:'Cinzel',serif;font-size:8px;
+  letter-spacing:5px;color:#C9A84C;
+  opacity:0;margin-top:32px;
+}
+
+/* KEYFRAMES */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
+}
+@keyframes fadeIn{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+@keyframes lineGrow{
+  from{width:0;}
+  to{width:80px;}
+}
+@keyframes itemPop{
+  from{opacity:0;transform:translateY(16px);}
+  to{opacity:1;transform:translateY(0);}
+}
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="deco-top"></div>
+  <div class="glow" id="glow"></div>
+
+  <!-- SLIDE 1 : TITRE -->
+  <div class="slide active" id="slide-0">
+    <div class="s1-crown" id="s1-crown">♛</div>
+    <div class="s1-brand" id="s1-brand">GOLDEN FEMININE</div>
+    <h1 class="s1-title" id="s1-title">
+      Deviens
+      <em>ELLE</em>
+    </h1>
+    <div class="s1-line" id="s1-line"></div>
+    <p class="s1-sub" id="s1-sub">Le guide pour passer de perdue à alignée.<br>Pour la femme qui sait qu'elle est capable de plus.</p>
+  </div>
+
+  <!-- SLIDE 2 : HISTOIRE -->
+  <div class="slide" id="slide-1">
+    <div class="s2-label" id="s2-label">MON HISTOIRE</div>
+    <p class="s2-text" id="s2-text">
+      Il y a eu <em>un hiver.</em><br><br>
+      Pas le genre dont on parle avec nostalgie.<br>
+      Le genre où tu <strong>continues à tenir</strong> — pas parce que tu es forte.<br>
+      Parce que tu n'as pas le choix.
+    </p>
+  </div>
+
+  <!-- SLIDE 3 : LE PROBLÈME -->
+  <div class="slide" id="slide-2">
+    <div class="s3-wrap">
+      <div class="s3-big" id="s3-big">
+        Le problème n'est pas<br>
+        ce que tu fais.<br>
+        <em>C'est qui tu crois être.</em>
+      </div>
+      <div class="s3-quote" id="s3-quote">
+        <p>"Tu agis toujours en cohérence avec l'image que tu as de toi-même. Tant que tu te vois comme celle qui galère — tes actions reviennent toujours vers cette identité."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4 : LES 5 PARTIES -->
+  <div class="slide" id="slide-3">
+    <div class="s4-title" id="s4-title">5 parties pour te <em>transformer en profondeur</em></div>
+    <div class="s4-grid" id="s4-grid">
+      <div class="s4-item">
+        <div class="s4-num">01</div>
+        <div class="s4-name">Le vrai diagnostic</div>
+      </div>
+      <div class="s4-item">
+        <div class="s4-num">02</div>
+        <div class="s4-name">Le déclic</div>
+      </div>
+      <div class="s4-item">
+        <div class="s4-num">03</div>
+        <div class="s4-name">Devenir ELLE</div>
+      </div>
+      <div class="s4-item">
+        <div class="s4-num">04</div>
+        <div class="s4-name">Micro-actions</div>
+      </div>
+      <div class="s4-item">
+        <div class="s4-num">05</div>
+        <div class="s4-name">Ton nouveau toi</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5 : LA QUESTION -->
+  <div class="slide" id="slide-4">
+    <div class="s5-wrap">
+      <div class="s5-small" id="s5-small">LA QUESTION QUI CHANGE TOUT</div>
+      <div class="s5-big" id="s5-big">"Est-ce qu'ELLE<br>ferait ça ?"</div>
+      <p class="s5-sub" id="s5-sub">Cette question te ramène à toi. À chaque fois.<br>Elle est le cœur de tout ce que tu vas traverser dans cet ebook.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 6 : TRANSFORMATION -->
+  <div class="slide" id="slide-5">
+    <div class="s6-grid">
+      <div class="s6-col avant" id="s6-avant">
+        <div class="s6-head">Avant</div>
+        <div class="s6-sub">LA VERSION QUI SUBISSAIT</div>
+        <ul class="s6-list">
+          <li>Elle attend d'être motivée</li>
+          <li>Elle tolère ce qui la rapetisse</li>
+          <li>Elle s'excuse de prendre de la place</li>
+          <li>Elle se définit par ses circonstances</li>
+        </ul>
+      </div>
+      <div class="s6-col apres" id="s6-apres">
+        <div class="s6-head gold">Après</div>
+        <div class="s6-sub">LA FEMME GOLDEN</div>
+        <ul class="s6-list gold-list">
+          <li>Elle décide sans attendre l'élan</li>
+          <li>Elle a des standards non négociables</li>
+          <li>Elle prend de la place sans s'excuser</li>
+          <li>Elle se choisit. Toujours.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7 : CTA -->
+  <div class="slide" id="slide-6">
+    <div class="s7-wrap">
+      <div class="s7-crown" id="s7-crown">♛</div>
+      <div class="s7-title" id="s7-title">Deviens <em>ELLE</em></div>
+      <p class="s7-quote" id="s7-quote">"Tu ne vas pas juste lire cet ebook.<br>Tu vas changer la façon dont tu te vois."</p>
+      <div class="s7-price" id="s7-price">29€</div>
+      <div class="s7-info" id="s7-info">PDF IMMÉDIAT · 35 PAGES · 5 EXERCICES</div>
+      <button class="s7-btn" id="s7-btn">JE DEVIENS ELLE →</button>
+      <div class="s7-brand" id="s7-brand">GOLDEN FEMININE</div>
+    </div>
+  </div>
+
+  <!-- Progress & controls -->
+  <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="slide-counter" id="slideCounter">01 / 07</div>
+  <div class="controls">
+    <button class="ctrl-btn" onclick="prevSlide()">←</button>
+    <button class="ctrl-btn" id="playBtn" onclick="togglePlay()">❚❚</button>
+    <button class="ctrl-btn" onclick="nextSlide()">→</button>
+  </div>
+
+  <div class="deco-bot"></div>
+</div>
+
+<script>
+const TOTAL = 7;
+const DURATION = 5000; // ms par slide
+let current = 0;
+let playing = true;
+let timer = null;
+let progressTimer = null;
+let progressStart = null;
+
+// Animations par slide
+const animations = {
+  0: () => {
+    anim('s1-crown', 'fadeIn', 0, 0.6);
+    anim('s1-brand', 'fadeUp', 300, 0.6);
+    anim('s1-title', 'fadeUp', 600, 0.8);
+    setTimeout(()=>{ document.getElementById('s1-line').style.width='80px'; }, 1000);
+    anim('s1-sub', 'fadeUp', 1100, 0.8);
+  },
+  1: () => {
+    anim('s2-label', 'fadeUp', 0, 0.6);
+    anim('s2-text', 'fadeUp', 400, 0.9);
+  },
+  2: () => {
+    anim('s3-big', 'fadeUp', 0, 0.8);
+    anim('s3-quote', 'fadeUp', 600, 0.8);
+  },
+  3: () => {
+    anim('s4-title', 'fadeUp', 0, 0.7);
+    const items = document.querySelectorAll('.s4-item');
+    items.forEach((el,i) => {
+      setTimeout(()=>{
+        el.style.opacity='1';
+        el.style.transform='translateY(0)';
+      }, 500 + i*150);
+    });
+  },
+  4: () => {
+    anim('s5-small', 'fadeUp', 0, 0.6);
+    anim('s5-big', 'fadeUp', 400, 0.9);
+    anim('s5-sub', 'fadeUp', 900, 0.7);
+  },
+  5: () => {
+    anim('s6-avant', 'fadeUp', 0, 0.8);
+    anim('s6-apres', 'fadeUp', 400, 0.8);
+  },
+  6: () => {
+    anim('s7-crown', 'fadeIn', 0, 0.6);
+    anim('s7-title', 'fadeUp', 300, 0.7);
+    anim('s7-quote', 'fadeUp', 600, 0.7);
+    anim('s7-price', 'fadeUp', 900, 0.7);
+    anim('s7-info', 'fadeUp', 1100, 0.6);
+    anim('s7-btn', 'fadeUp', 1300, 0.8);
+    anim('s7-brand', 'fadeIn', 1800, 0.5);
+  }
+};
+
+function anim(id, type, delay, dur) {
+  const el = document.getElementById(id);
+  if(!el) return;
+  setTimeout(()=>{
+    el.style.animation = `${type} ${dur}s ease both`;
+    el.style.opacity = '1';
+  }, delay);
+}
+
+function resetSlide(idx) {
+  // Reset all animated elements
+  const resets = {
+    0: ['s1-crown','s1-brand','s1-title','s1-sub'],
+    1: ['s2-label','s2-text'],
+    2: ['s3-big','s3-quote'],
+    3: ['s4-title'],
+    4: ['s5-small','s5-big','s5-sub'],
+    5: ['s6-avant','s6-apres'],
+    6: ['s7-crown','s7-title','s7-quote','s7-price','s7-info','s7-btn','s7-brand']
+  };
+  if(resets[idx]) {
+    resets[idx].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el){el.style.opacity='0';el.style.animation='none';}
+    });
+  }
+  if(idx===3){
+    document.querySelectorAll('.s4-item').forEach(el=>{
+      el.style.opacity='0';el.style.transform='translateY(16px)';
+    });
+  }
+  if(idx===0){
+    const line=document.getElementById('s1-line');
+    if(line) line.style.width='0px';
+  }
+}
+
+function goToSlide(idx) {
+  const slides = document.querySelectorAll('.slide');
+  slides[current].classList.remove('active');
+  resetSlide(idx);
+  current = idx;
+  slides[current].classList.add('active');
+  document.getElementById('slideCounter').textContent =
+    String(current+1).padStart(2,'0') + ' / ' + String(TOTAL).padStart(2,'0');
+  setTimeout(()=>{ if(animations[current]) animations[current](); }, 50);
+  startProgress();
+}
+
+function nextSlide() {
+  const next = (current + 1) % TOTAL;
+  goToSlide(next);
+}
+function prevSlide() {
+  const prev = (current - 1 + TOTAL) % TOTAL;
+  goToSlide(prev);
+}
+
+function startProgress() {
+  clearInterval(progressTimer);
+  clearTimeout(timer);
+  const fill = document.getElementById('progressFill');
+  fill.style.transition = 'none';
+  fill.style.width = '0%';
+  progressStart = Date.now();
+
+  if(playing) {
+    setTimeout(()=>{
+      fill.style.transition = `width ${DURATION}ms linear`;
+      fill.style.width = '100%';
+    }, 30);
+    timer = setTimeout(()=>{ if(playing) nextSlide(); }, DURATION);
+  }
+}
+
+function togglePlay() {
+  playing = !playing;
+  document.getElementById('playBtn').textContent = playing ? '❚❚' : '▶';
+  if(playing) { startProgress(); }
+  else {
+    clearTimeout(timer);
+    clearInterval(progressTimer);
+    const fill = document.getElementById('progressFill');
+    const elapsed = Date.now() - (progressStart||Date.now());
+    const pct = Math.min(100, (elapsed/DURATION)*100);
+    fill.style.transition='none';
+    fill.style.width = pct+'%';
+  }
+}
+
+// Init
+setTimeout(()=>{ if(animations[0]) animations[0](); }, 100);
+startProgress();
+</script>
+</body>
+</html>
